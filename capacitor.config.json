@@ -1,0 +1,6 @@
+{
+  "appId": "com.ravivarma.gullylegends",
+  "appName": "Gully Legends",
+  "webDir": "www",
+  "android": { "backgroundColor": "#0a1a30" }
+}

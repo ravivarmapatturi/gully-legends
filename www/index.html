@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#0a1a30">
+<title>Gully Legends</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Home -->
+<section id="home" class="screen">
+  <div id="updateBar" class="update" hidden>New version <b></b> is out! <a href="#">Download update</a></div>
+  <header class="hero">
+    <div class="logo"><span>GULLY</span><span>LEGENDS</span></div>
+    <p class="tag">Build your squad. Shape every player. Win the league.</p>
+  </header>
+  <div class="statrow">
+    <div class="stat"><small>Coins</small><b>🪙 <span id="coins">0</span></b></div>
+    <div class="stat"><small>Rank</small><b id="tier">Bronze</b></div>
+  </div>
+  <p id="record" class="muted center"></p>
+  <div class="card nextmatch">
+    <small>Next match · 2 overs · 3 wickets</small>
+    <p id="nextOpp"></p>
+    <button id="playBtn" class="primary big">▶ Play match</button>
+  </div>
+  <button id="squadBtn" class="secondary big">👥 Squad &amp; Training <span id="freeHint" class="badge pulse" hidden>Free training!</span></button>
+  <div class="card">
+    <h3>League ladder</h3>
+    <ol id="ladder" class="ladder"></ol>
+  </div>
+  <button id="settingsBtn" class="ghost">⚙ Settings</button>
+</section>
+
+<!-- Squad -->
+<section id="squad" class="screen" hidden>
+  <div class="topbar"><button class="ghost" data-back="home">← Home</button><h2>Squad</h2><span></span></div>
+  <p class="muted">The top 3 bat in order. Tap a player to train them and spend trait tokens.</p>
+  <div id="squadList"></div>
+</section>
+
+<!-- Player -->
+<section id="player" class="screen" hidden>
+  <div class="topbar"><button class="ghost" data-back="squad">← Squad</button><h2 id="pTitle"></h2><span></span></div>
+  <p id="pMeta" class="muted"></p>
+  <div id="pSig" class="card sig"></div>
+  <div class="card">
+    <div class="tokhead"><div id="pTokens"></div><button id="resetBtn" class="ghost small">Reset</button></div>
+    <div id="tokenBar" class="tokbar"></div>
+    <button id="trainBtn" class="primary">Train</button>
+    <p class="muted small">Every token goes into any trait you like, up to 5 in one trait. Reset is always free.</p>
+  </div>
+  <div id="traitList"></div>
+</section>
+
+<!-- Match -->
+<section id="match" class="screen" hidden>
+  <div id="matchWrap">
+    <canvas id="field"></canvas>
+    <button id="quitBtn" class="quit" aria-label="Quit match">✕</button>
+
+    <div id="bowlerPick" class="overlay" hidden>
+      <div class="sheet">
+        <h3>Pick your bowler for this over</h3>
+        <div id="bowlerList"></div>
+      </div>
+    </div>
+
+    <div id="deliveryBar" class="dbar" hidden>
+      <p id="scout"></p>
+      <div class="dgrid">
+        <button data-delivery="good">🎯<span>Good length</span></button>
+        <button data-delivery="yorker">🎳<span>Yorker</span></button>
+        <button data-delivery="bouncer">🪨<span>Bouncer</span></button>
+        <button data-delivery="slower">🐢<span>Slower</span></button>
+      </div>
+    </div>
+
+    <div id="breakCard" class="overlay" hidden>
+      <div class="sheet center">
+        <small class="muted">Innings break</small>
+        <h2 id="breakTitle"></h2>
+        <p id="breakText"></p>
+        <button id="chaseBtn" class="primary big">🏏 Start the chase</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Result -->
+<section id="result" class="screen" hidden>
+  <div class="card center resultcard">
+    <h1 id="resTitle"></h1>
+    <p id="resText"></p>
+    <div id="resCoins" class="coinlist"></div>
+    <button id="againBtn" class="primary big">▶ Next match</button>
+    <button id="homeBtn" class="ghost">Home</button>
+  </div>
+</section>
+
+<!-- Settings -->
+<section id="settings" class="screen" hidden>
+  <div class="topbar"><button class="ghost" data-back="home">← Home</button><h2>Settings</h2><span></span></div>
+  <div class="card">
+    <label class="toggle"><input type="checkbox" id="setSound"> Sound effects</label>
+    <label class="toggle"><input type="checkbox" id="setRing"> Timing ring when batting</label>
+  </div>
+  <div class="card">
+    <h3>How to play</h3>
+    <p class="small">You bowl first: pick a bowler each over, then a delivery each ball. Read the scouting line to find the batter's weakness, and don't bowl the same ball again and again.</p>
+    <p class="small">Then you bat: tap the left, middle or right of the screen as the ball reaches the yellow ring. Hit with the line of the ball, not against it.</p>
+    <p class="small">Runs, fours and sixes earn hit coins. Spend them on training to give players trait tokens.</p>
+  </div>
+  <button id="wipeBtn" class="danger">Reset all progress</button>
+  <p id="version" class="muted center small"></p>
+</section>
+
+<div id="toast" class="toast" hidden></div>
+
+<script src="js/data.js"></script>
+<script src="js/updater.js"></script>
+<script src="js/match.js"></script>
+<script src="js/ui.js"></script>
+</body>
+</html>
