@@ -10,7 +10,7 @@ const UI = (() => {
   function fresh() {
     return {
       v: 1, coins: 300, nextOpp: 0, wins: 0, played: 0, sixes: 0, freeTrainDay: '',
-      settings: { sound: true, ring: true },
+      settings: { sound: true, ring: true, batMode: 'pick' },
       players: STARTER_SQUAD.map(([name, role, bat, bowl, sig], i) => ({
         id: 'p' + i, name, role, bat, bowl, sig, order: i, tokens: 2, traits: {},
       })),
@@ -192,11 +192,12 @@ const UI = (() => {
     el.textContent = msg; el.hidden = false;
     clearTimeout(toastTimer); toastTimer = setTimeout(() => el.hidden = true, 2200);
   }
-  const settings = () => (S && S.settings) || { sound: true, ring: true };
+  const settings = () => (S && S.settings) || { sound: true, ring: true, batMode: 'pick' };
 
   function renderSettings() {
     $('setSound').checked = S.settings.sound;
     $('setRing').checked = S.settings.ring;
+    $('setTiming').checked = S.settings.batMode === 'timing';
     $('version').textContent = 'Version ' + APP_VERSION;
     show('settings');
   }
@@ -218,6 +219,8 @@ const UI = (() => {
     $('againBtn').onclick = play;
     $('homeBtn').onclick = renderHome;
     $('setSound').onchange = e => { S.settings.sound = e.target.checked; persist(); };
+    $('setTiming').onchange = e => { S.settings.batMode = e.target.checked ? 'timing' : 'pick'; persist(); };
+    for (const b of document.querySelectorAll('[data-runs]')) b.onclick = () => Match.chooseRuns(+b.dataset.runs);
     $('setRing').onchange = e => { S.settings.ring = e.target.checked; persist(); };
     $('wipeBtn').onclick = () => { if (confirm('Delete all progress and start over?')) { S = fresh(); persist(); renderHome(); } };
     renderHome();

@@ -7,11 +7,11 @@ const OVERS = 2, BALLS = OVERS * 6, WKTS = 3;
 
 // Customisable traits: players spend trait tokens on these, any mix up to 10.
 const TRAITS = {
-  power:    { name: 'Power Hitter',      icon: '💥', kind: 'bat',  desc: 'Clean hits fly for six more often' },
-  timing:   { name: 'Timing Master',     icon: '🎯', kind: 'bat',  desc: 'Wider timing window on every ball' },
-  finisher: { name: 'Finisher',          icon: '🔥', kind: 'bat',  desc: 'Last over: wider window, more sixes' },
-  anchor:   { name: 'Anchor',            icon: '⚓', kind: 'bat',  desc: 'Mistimed shots get caught less' },
-  pace:     { name: 'Pace Reader',       icon: '⚡', kind: 'bat',  desc: 'Fast bowling feels slower to you' },
+  power:    { name: 'Power Hitter',      icon: '💥', kind: 'bat',  desc: 'Better odds on 4s and 6s' },
+  timing:   { name: 'Timing Master',     icon: '🎯', kind: 'bat',  desc: 'Better odds on every shot' },
+  finisher: { name: 'Finisher',          icon: '🔥', kind: 'bat',  desc: 'Last over: much better odds on 4s and 6s' },
+  anchor:   { name: 'Anchor',            icon: '⚓', kind: 'bat',  desc: 'Lower risk of getting out' },
+  pace:     { name: 'Pace Reader',       icon: '⚡', kind: 'bat',  desc: 'Better odds on every shot vs pace' },
   yorker:   { name: 'Yorker Specialist', icon: '🎳', kind: 'bowl', desc: 'Yorkers land more and take wickets' },
   bouncer:  { name: 'Bouncer Brute',     icon: '🪨', kind: 'bowl', desc: 'Bouncers are harder to score off' },
   slower:   { name: 'Slower Ball Magic', icon: '🐢', kind: 'bowl', desc: 'Slower balls fool batters more' },
@@ -21,10 +21,10 @@ const TRAITS = {
 
 // Signature skills: one per player, built in, never costs tokens.
 const SIGNATURES = {
-  helicopter: { name: 'Helicopter Shot', icon: '🚁', kind: 'bat',  desc: 'Perfect hits off yorkers always go for six' },
-  ramp:       { name: 'Ramp Shot',       icon: '🛹', kind: 'bat',  desc: 'Well-timed bouncers always go to the rope' },
-  coolhead:   { name: 'Cool Head',       icon: '🧊', kind: 'bat',  desc: 'Never caught off a well-timed shot' },
-  wristy:     { name: 'Wristy Flicks',   icon: '🌊', kind: 'bat',  desc: 'No penalty for hitting against the line' },
+  helicopter: { name: 'Helicopter Shot', icon: '🚁', kind: 'bat',  desc: 'Big boost to your six odds' },
+  ramp:       { name: 'Ramp Shot',       icon: '🛹', kind: 'bat',  desc: 'Big boost to your four odds' },
+  coolhead:   { name: 'Cool Head',       icon: '🧊', kind: 'bat',  desc: 'Much lower risk of getting out' },
+  wristy:     { name: 'Wristy Flicks',   icon: '🌊', kind: 'bat',  desc: 'Better odds on 1s, 2s and 3s' },
   toecrusher: { name: 'Toe Crusher',     icon: '🦶', kind: 'bowl', desc: 'Yorkers never slip into full tosses' },
   mystery:    { name: 'Mystery Ball',    icon: '🎭', kind: 'bowl', desc: 'Batters can never read repeat deliveries' },
   express:    { name: 'Express Pace',    icon: '🚀', kind: 'bowl', desc: 'Batters find fewer boundaries off you' },

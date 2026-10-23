@@ -12,6 +12,10 @@ node -e "const f='package.json',p=require('./'+f);p.version='$VER';require('fs')
 sed -i "s/^const APP_VERSION = '.*';/const APP_VERSION = '$VER';/" www/js/updater.js
 
 export ANDROID_HOME="$HOME/Android/Sdk"
+export JAVA_TOOL_OPTIONS="-Djava.net.preferIPv4Stack=true"
+# Use a full JDK (the system Java here lacks javac). Override by setting JAVA_HOME yourself.
+JDK=$(ls -d "$HOME"/.jdks/jdk-21* 2>/dev/null | head -1)
+export JAVA_HOME="${JAVA_HOME:-$JDK}"
 npx cap sync android
 (cd android && ./gradlew --no-daemon -q assembleRelease)
 

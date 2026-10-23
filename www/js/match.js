@@ -88,7 +88,7 @@ const Match = (() => {
   const lastOver = () => cur().balls >= BALLS - 6;
 
   // ---------- HTML overlay controls ----------
-  function hideAll() { for (const id of ['bowlerPick', 'deliveryBar', 'breakCard']) $(id).hidden = true; }
+  function hideAll() { for (const id of ['bowlerPick', 'deliveryBar', 'breakCard', 'runBar']) $(id).hidden = true; }
 
   function showBowlerPick() {
     hideAll();
@@ -186,7 +186,7 @@ const Match = (() => {
     const p = proj(lerp(b.r0, b.L, b.d), b.d);
     const ang = -Math.PI / 2 + dir * 0.6 + (Math.random() - 0.5) * 0.35;
     const edge = res === 'W' && q === 0;
-    const dist = res === 6 ? 720 : res === 4 ? 470 : res === 'W' ? (edge ? 0 : 280) : res === 2 ? 260 : res === 1 ? 170 : 60;
+    const dist = res === 6 ? 720 : res === 4 ? 470 : res === 'W' ? (edge ? 0 : 280) : res === 3 ? 340 : res === 2 ? 260 : res === 1 ? 170 : 60;
     const peak = res === 6 ? 230 : res === 'W' ? (edge ? 0 : 110) : res === 4 ? 8 : 25;
     M.shot = { miss: false, res, q, from: { x: p.x, y: p.y, h: ballH(b, b.d) * p.s }, ang, dist, peak,
                start: t, end: t + (res === 6 ? 1500 : 1200), label: labelTxt || label(res, q), sub: sub || '' };
@@ -218,7 +218,7 @@ const Match = (() => {
   // AI batter plays the shot that bowlOutcome() already decided.
   function resolveAI(t) {
     const b = M.ball, o = b.ai;
-    const name = DELIVERIES[b.type].name + (o.fullToss ? ' → full toss!' : '');
+    const name = (o.went ? `Went for ${o.went} · ` : '') + DELIVERIES[b.type].name + (o.fullToss ? ' → full toss!' : '');
     if (o.res === 'W' && o.how === 'bowled') return missShot(t, true, name);
     if (o.res === 0 && o.how === 'beaten') return missShot(t, false, name);
     M.swingAt = t - 30;
@@ -239,7 +239,7 @@ const Match = (() => {
   }
 
   function swing(x, t) {
-    if (M.inn !== 2 || (M.state !== 'ball' && M.state !== 'runup')) return;
+    if (M.inn !== 2 || pickMode() || (M.state !== 'ball' && M.state !== 'runup')) return;
     const b = M.ball;
     if (b.swung || b.resolved) return;
     b.swung = true; M.swingAt = t;
@@ -290,12 +290,15 @@ const Match = (() => {
   // ---------- Update ----------
   function update(t) {
     const m = M;
-    if (m.inn === 2 && m.state === 'wait' && t >= m.t0) { m.state = 'runup'; m.runStart = t; m.ball = aiBall(); }
+    if (m.inn === 2 && m.state === 'wait' && t >= m.t0) {
+      if (pickMode()) showRunBar();
+      else { m.state = 'runup'; m.runStart = t; m.ball = aiBall(); }
+    }
     if (m.state === 'runup' && t >= m.runStart + 650) { m.state = 'ball'; m.ball.start = t; m.ball.arrive = t + m.ball.dur; }
     if (m.state === 'ball') {
       const b = m.ball;
       b.d = (t - b.start) / b.dur;
-      if (m.inn === 1 && t >= b.arrive) resolveAI(t);
+      if ((m.inn === 1 || b.ai) && t >= b.arrive) resolveAI(t);
       else if (m.inn === 2 && t > b.arrive + 175) {
         const bowled = Math.abs(b.L) < 0.2 && ballH(b, 1) < STUMP_H;
         missShot(t, bowled, b.timing || (b.swung ? 'Missed it' : 'No shot played'));
@@ -341,6 +344,52 @@ const Match = (() => {
       M.batOrder.map(p => `<span class="chip">${SIGNATURES[p.sig].icon} ${p.name}</span>`).join(' ');
     $('breakCard').hidden = false;
   }
+  // ---------- Innings 2, pick-runs mode (Hitwicket style) ----------
+  // The player picks how many runs to go for; the batter's skills set the odds.
+  const pickMode = () => UI.settings().batMode !== 'timing';
+  const RUN_BASE = { 1: [0.92, 0.04], 2: [0.78, 0.08], 3: [0.62, 0.16], 4: [0.48, 0.28], 6: [0.34, 0.42] };
+
+  function runOdds(p, bw, k) {
+    let ok = RUN_BASE[k][0] + (p.bat - bw.rating) / 300;
+    ok += lv(p, 'timing') * 0.02 + lv(p, 'pace') * 0.015;
+    if (k >= 4) ok += lv(p, 'power') * 0.03 + (lastOver() ? lv(p, 'finisher') * 0.03 : 0);
+    if (k <= 3 && p.sig === 'wristy') ok += 0.04;
+    if (k === 6 && p.sig === 'helicopter') ok += 0.06;
+    if (k === 4 && p.sig === 'ramp') ok += 0.06;
+    let risk = RUN_BASE[k][1] * (1 - lv(p, 'anchor') * 0.12) * (p.sig === 'coolhead' ? 0.7 : 1);
+    risk += (bw.rating - p.bat) / 400;
+    ok = clamp(ok, 0.05, 0.97);
+    risk = clamp(risk, 0.01, 0.6) * (1 - ok);   // wicket only happens on a failed attempt
+    return { ok, risk };
+  }
+
+  function showRunBar() {
+    M.state = 'pickRun';
+    const p = M.batOrder[cur().wk], bw = M.opp.bowlers[Math.floor(cur().balls / 6) % M.opp.bowlers.length];
+    $('runScout').innerHTML = `<b>${p.name}</b> (${p.bat}) vs ${bw.name} (${bw.rating})`;
+    for (const b of document.querySelectorAll('[data-runs]')) {
+      const o = runOdds(p, bw, +b.dataset.runs);
+      b.querySelector('.ok').textContent = Math.round(o.ok * 100) + '%';
+      b.querySelector('.risk').textContent = '⚠ ' + Math.round(o.risk * 100) + '%';
+    }
+    $('runBar').hidden = false;
+  }
+
+  function chooseRuns(k) {
+    if (!M || M.state !== 'pickRun') return;
+    $('runBar').hidden = true;
+    const p = M.batOrder[cur().wk], bw = M.opp.bowlers[Math.floor(cur().balls / 6) % M.opp.bowlers.length];
+    const o = runOdds(p, bw, k), r = Math.random();
+    let res, how = 'hit';
+    if (r < o.ok) res = k;
+    else if (r < o.ok + o.risk) { res = 'W'; how = Math.random() < 0.35 ? 'bowled' : 'caught'; }
+    else { res = k >= 4 && Math.random() < 0.5 ? 1 : 0; how = res === 0 && Math.random() < 0.5 ? 'beaten' : 'hit'; }
+    M.ball = aiBall();
+    if (how === 'bowled') M.ball.L = (Math.random() - 0.5) * 0.2;
+    M.ball.ai = { res, how, fullToss: false, went: k };
+    M.state = 'runup'; M.runStart = now();
+  }
+
   function startChase() {
     $('breakCard').hidden = true;
     M.inn = 2; M.ball = null; M.state = 'wait'; M.t0 = now() + 700;
@@ -515,7 +564,7 @@ const Match = (() => {
     }
     if (M.state === 'shot' && M.shot.bowled) b.d = 1;
     const d = b.d, p = proj(lerp(b.r0, b.L, d), d), h = ballH(b, d) * p.s;
-    if (M.inn === 2 && M.state === 'ball' && d > 0.35 && d < 1 && UI.settings().ring) {
+    if (M.inn === 2 && !pickMode() && M.state === 'ball' && d > 0.35 && d < 1 && UI.settings().ring) {
       const c = proj(b.L, 1), ch = ballH(b, 1);
       ctx.strokeStyle = `rgba(255,255,255,${(d - 0.35) * 1.2})`; ctx.lineWidth = 2;
       ctx.beginPath(); ctx.arc(c.x, c.y - ch, 9 + 70 * (1 - d), 0, 7); ctx.stroke();
@@ -555,7 +604,7 @@ const Match = (() => {
       ctx.fill();
       if (r !== undefined) text(r === 0 ? '•' : String(r), x, y + 1, 13, r === 'W' || r === 6 || r === 4 ? '#fff' : '#1a1a1a');
     }
-    if (M.inn === 2) {
+    if (M.inn === 2 && !pickMode()) {
       text('◀ LEFT', 50, H - 28, 13, 'rgba(255,255,255,0.6)');
       text('STRAIGHT', W / 2, H - 28, 13, 'rgba(255,255,255,0.6)');
       text('RIGHT ▶', W - 50, H - 28, 13, 'rgba(255,255,255,0.6)');
@@ -607,5 +656,5 @@ const Match = (() => {
     if (e.key in map) { e.preventDefault(); swing(map[e.key], now()); }
   }
 
-  return { init, start, stop, chooseDelivery, startChase, active: () => !!M };
+  return { init, start, stop, chooseDelivery, chooseRuns, startChase, active: () => !!M };
 })();

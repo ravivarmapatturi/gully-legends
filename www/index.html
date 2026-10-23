@@ -78,6 +78,17 @@
       </div>
     </div>
 
+    <div id="runBar" class="dbar" hidden>
+      <p id="runScout"></p>
+      <div class="rgrid">
+        <button data-runs="1"><b>1</b><span class="ok"></span><span class="risk"></span></button>
+        <button data-runs="2"><b>2</b><span class="ok"></span><span class="risk"></span></button>
+        <button data-runs="3"><b>3</b><span class="ok"></span><span class="risk"></span></button>
+        <button data-runs="4"><b>4</b><span class="ok"></span><span class="risk"></span></button>
+        <button data-runs="6"><b>6</b><span class="ok"></span><span class="risk"></span></button>
+      </div>
+    </div>
+
     <div id="breakCard" class="overlay" hidden>
       <div class="sheet center">
         <small class="muted">Innings break</small>
@@ -105,12 +116,13 @@
   <div class="topbar"><button class="ghost" data-back="home">← Home</button><h2>Settings</h2><span></span></div>
   <div class="card">
     <label class="toggle"><input type="checkbox" id="setSound"> Sound effects</label>
-    <label class="toggle"><input type="checkbox" id="setRing"> Timing ring when batting</label>
+    <label class="toggle"><input type="checkbox" id="setTiming"> Arcade batting (tap to time shots instead of picking runs)</label>
+    <label class="toggle"><input type="checkbox" id="setRing"> Timing ring in arcade batting</label>
   </div>
   <div class="card">
     <h3>How to play</h3>
     <p class="small">You bowl first: pick a bowler each over, then a delivery each ball. Read the scouting line to find the batter's weakness, and don't bowl the same ball again and again.</p>
-    <p class="small">Then you bat: tap the left, middle or right of the screen as the ball reaches the yellow ring. Hit with the line of the ball, not against it.</p>
+    <p class="small">Then you bat: pick how many runs to go for each ball. Every button shows your chance of getting them (green) and the risk of getting out (red), worked out from your batter's skills and traits against the bowler. Bigger shots, bigger risk.</p>
     <p class="small">Runs, fours and sixes earn hit coins. Spend them on training to give players trait tokens.</p>
   </div>
   <button id="wipeBtn" class="danger">Reset all progress</button>

@@ -119,3 +119,12 @@ h3 { font-size: 15px; margin: 4px 0 10px; color: var(--muted); text-transform: u
 .toggle { display: flex; align-items: center; gap: 12px; padding: 10px 0; font-size: 16px; }
 .toggle input { width: 22px; height: 22px; accent-color: var(--gold); }
 .toast { position: fixed; left: 50%; bottom: 30px; transform: translateX(-50%); background: var(--green); color: #032; font-weight: 800; padding: 12px 18px; border-radius: 12px; z-index: 10; }
+
+.rgrid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.rgrid button { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 6px 2px 8px; display: flex; flex-direction: column; align-items: center; gap: 1px; }
+.rgrid button b { font-size: 26px; font-weight: 900; }
+.rgrid button[data-runs="4"] b { color: #5dade2; }
+.rgrid button[data-runs="6"] b { color: var(--gold); }
+.rgrid .ok { font-size: 13px; font-weight: 800; color: var(--green); }
+.rgrid .risk { font-size: 11px; font-weight: 700; color: var(--red); }
+.rgrid button:active { background: var(--blue); }
