@@ -1,5 +1,5 @@
 // Checks GitHub Releases for a newer APK and offers it on the home screen.
-const APP_VERSION = '0.1.0';
+const APP_VERSION = '0.2.0';
 const RELEASE_REPO = 'ravivarmapatturi/gully-legends';
 
 const Updater = (() => {

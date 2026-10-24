@@ -8,6 +8,7 @@ NOTES="${2:-New version}"
 REPO="ravivarmapatturi/gully-legends"
 
 # One version number everywhere: package.json (Gradle reads it) and the in-game updater.
+node --test tests/engine.test.js >/dev/null || { echo "Engine tests failed"; exit 1; }
 node -e "const f='package.json',p=require('./'+f);p.version='$VER';require('fs').writeFileSync(f,JSON.stringify(p,null,2)+'\n')"
 sed -i "s/^const APP_VERSION = '.*';/const APP_VERSION = '$VER';/" www/js/updater.js
 

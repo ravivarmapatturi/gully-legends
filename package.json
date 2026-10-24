@@ -1,12 +1,16 @@
 {
   "name": "gully-legends",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Gully Legends: a free cricket squad game",
   "scripts": {},
   "dependencies": {
     "@capacitor/android": "^7.6.9",
     "@capacitor/cli": "^7.6.9",
-    "@capacitor/core": "^7.6.9"
+    "@capacitor/core": "^7.6.9",
+    "three": "^0.170.0"
+  },
+  "devDependencies": {
+    "@gltf-transform/cli": "^4.5.1"
   }
 }
